@@ -18,11 +18,12 @@
 
 package org.gradle.integtests.samples
 
-import org.gradle.integtests.fixtures.AbstractSampleIntegrationTest
+import org.gradle.integtests.fixtures.AbstractIntegrationSpec
 import org.gradle.integtests.fixtures.DefaultTestExecutionResult
 import org.gradle.integtests.fixtures.Sample
 import org.gradle.test.fixtures.file.TestFile
 import org.gradle.util.Requires
+import org.junit.Before
 import org.junit.Rule
 import spock.lang.Unroll
 
@@ -30,9 +31,7 @@ import static org.gradle.util.TestPrecondition.KOTLIN_SCRIPT
 import static org.hamcrest.Matchers.containsString
 
 @Requires(KOTLIN_SCRIPT)
-class SamplesJavaMultiProjectIntegrationTest extends AbstractSampleIntegrationTest {
-
-    static final String JAVA_PROJECT_NAME = 'java/multiproject'
+class SamplesJavaMultiProjectIntegrationTest extends AbstractIntegrationSpec {
     static final String SHARED_NAME = 'shared'
     static final String API_NAME = 'api'
     static final String WEBAPP_NAME = 'webservice'
@@ -40,6 +39,11 @@ class SamplesJavaMultiProjectIntegrationTest extends AbstractSampleIntegrationTe
     static final String WEBAPP_PATH = "$SERVICES_NAME/$WEBAPP_NAME" as String
 
     @Rule public final Sample sample = new Sample(testDirectoryProvider, 'java/multiproject')
+
+    @Before
+    def setUp() {
+        useRepositoryMirrors(true)
+    }
 
     @Unroll
     def "multi project Java project sample with #dsl dsl"() {
@@ -89,51 +93,51 @@ class SamplesJavaMultiProjectIntegrationTest extends AbstractSampleIntegrationTe
         TestFile tmpDir = file("$SHARED_NAME-1.0.jar")
         dslDir.file(SHARED_NAME, "build/libs/$SHARED_NAME-1.0.jar").unzipTo(tmpDir)
         tmpDir.assertHasDescendants(
-                'META-INF/MANIFEST.MF',
-                'org/gradle/shared/Person.class',
-                // package-info.java only gets compiled into class if it contains at least one annotation
-                // 'org/gradle/shared/package-info.class',
-                'org/gradle/shared/main.properties'
+            'META-INF/MANIFEST.MF',
+            'org/gradle/shared/Person.class',
+            // package-info.java only gets compiled into class if it contains at least one annotation
+            // 'org/gradle/shared/package-info.class',
+            'org/gradle/shared/main.properties'
         )
 
         // Check contents of API jar
         tmpDir = file("$API_NAME-1.0.jar")
         dslDir.file(API_NAME, "build/libs/$API_NAME-1.0.jar").unzipTo(tmpDir)
         tmpDir.assertHasDescendants(
-                'META-INF/MANIFEST.MF',
-                'org/gradle/api/PersonList.class',
-                'org/gradle/apiImpl/Impl.class')
+            'META-INF/MANIFEST.MF',
+            'org/gradle/api/PersonList.class',
+            'org/gradle/apiImpl/Impl.class')
 
         // Check contents of API jar
         tmpDir = file("$API_NAME-spi-1.0.jar")
         dslDir.file(API_NAME, "build/libs/$API_NAME-spi-1.0.jar").unzipTo(tmpDir)
         tmpDir.assertHasDescendants(
-                'META-INF/MANIFEST.MF',
-                'org/gradle/api/PersonList.class')
+            'META-INF/MANIFEST.MF',
+            'org/gradle/api/PersonList.class')
 
         // Check contents of War
         tmpDir = file("$WEBAPP_NAME-2.5.war")
         dslDir.file(WEBAPP_PATH, "build/libs/$WEBAPP_NAME-2.5.war").unzipTo(tmpDir)
         tmpDir.assertHasDescendants(
-                'META-INF/MANIFEST.MF',
-                'WEB-INF/classes/org/gradle/webservice/TestTest.class',
-                "WEB-INF/lib/$SHARED_NAME-1.0.jar".toString(),
-                "WEB-INF/lib/$API_NAME-1.0.jar".toString(),
-                "WEB-INF/lib/$API_NAME-spi-1.0.jar".toString(),
-                'WEB-INF/lib/commons-collections-3.2.2.jar',
-                'WEB-INF/lib/commons-io-2.6.jar',
-                'WEB-INF/lib/commons-lang3-3.7.jar'
+            'META-INF/MANIFEST.MF',
+            'WEB-INF/classes/org/gradle/webservice/TestTest.class',
+            "WEB-INF/lib/$SHARED_NAME-1.0.jar".toString(),
+            "WEB-INF/lib/$API_NAME-1.0.jar".toString(),
+            "WEB-INF/lib/$API_NAME-spi-1.0.jar".toString(),
+            'WEB-INF/lib/commons-collections-3.2.2.jar',
+            'WEB-INF/lib/commons-io-2.6.jar',
+            'WEB-INF/lib/commons-lang3-3.7.jar'
         )
 
         // Check contents of dist zip
         tmpDir = file("$API_NAME-1.0.zip")
         dslDir.file(API_NAME, "build/distributions/$API_NAME-1.0.zip").unzipTo(tmpDir)
         tmpDir.assertHasDescendants(
-                'README.txt',
-                "libs/$API_NAME-spi-1.0.jar".toString(),
-                "libs/$SHARED_NAME-1.0.jar".toString(),
-                'libs/commons-io-2.6.jar',
-                'libs/commons-lang3-3.7.jar'
+            'README.txt',
+            "libs/$API_NAME-spi-1.0.jar".toString(),
+            "libs/$SHARED_NAME-1.0.jar".toString(),
+            'libs/commons-io-2.6.jar',
+            'libs/commons-lang3-3.7.jar'
         )
     }
 
