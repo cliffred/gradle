@@ -19,7 +19,6 @@ package org.gradle.integtests.fixtures.executer;
 import org.gradle.test.fixtures.file.TestFile;
 import org.gradle.util.GradleVersion;
 
-import javax.annotation.Nullable;
 import java.io.File;
 
 /**
@@ -55,8 +54,7 @@ public class IntegrationTestBuildContext {
     }
 
     public TestFile getGradleGeneratedApiJarCacheDir() {
-        String generatedApiJarCacheDir = mandatorySystemProperty("integTest.gradleGeneratedApiJarCacheDir");
-        return new TestFile(replaceIdeaModuleNameMacro(generatedApiJarCacheDir));
+        return file("integTest.gradleGeneratedApiJarCacheDir", null);
     }
 
     public TestFile getTmpDir() {
@@ -109,7 +107,7 @@ public class IntegrationTestBuildContext {
             return new TestFile(new File(path));
         }
         if (defaultPath == null) {
-            throw propertyMustBeSetException(propertyName);
+            throw new RuntimeException("You must set the '" + propertyName + "' property to run the integration tests.");
         }
         return testFile(defaultPath);
     }
@@ -119,36 +117,6 @@ public class IntegrationTestBuildContext {
         return file.isAbsolute()
             ? new TestFile(file)
             : new TestFile(TEST_DIR.file(path).getAbsoluteFile());
-    }
-
-    private String mandatorySystemProperty(String propertyName) {
-        String property = System.getProperty(propertyName);
-        if (property == null) {
-            throw propertyMustBeSetException(propertyName);
-        }
-        return property;
-    }
-
-    private String replaceIdeaModuleNameMacro(String string) {
-        // when running from IntelliJ IDEA, the MODULE_NAME macro needs to be translated here
-        // for IDEA currently only handles $MODULE_DIR$ and $PROJECT_DIR$ in Run configuration settings
-        // We use `%` as a separator to differentiate from IDEA's `$`
-        String ideaModuleName = getIdeaModuleName();
-        return ideaModuleName != null
-            ? string.replace("%MODULE_NAME%", ideaModuleName)
-            : string;
-    }
-
-    @Nullable
-    private String getIdeaModuleName() {
-        String ideaModuleDir = System.getProperty("integTest.ideaModuleDir");
-        return ideaModuleDir != null
-            ? new File(ideaModuleDir).getName()
-            : null;
-    }
-
-    private static RuntimeException propertyMustBeSetException(String propertyName) {
-        return new RuntimeException("You must set the '" + propertyName + "' property to run the integration tests.");
     }
 
 }
