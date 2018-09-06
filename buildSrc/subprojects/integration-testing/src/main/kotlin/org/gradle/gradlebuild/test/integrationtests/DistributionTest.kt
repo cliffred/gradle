@@ -116,7 +116,7 @@ class GradleInstallationForTestEnvironmentProvider(project: Project) : CommandLi
 
     @get:Nested
     val gradleDistribution: GradleDistribution
-        get() = if (samplesRequired.getOrElse(false)) gradleDistributionWithSamples else gradleDistributionWithoutSamples
+        get() = gradleDistributionWithSamples
 
     override fun asArguments() =
         mapOf(
