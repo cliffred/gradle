@@ -59,9 +59,6 @@ public class RunAsBuildOperationBuildActionRunner implements BuildActionRunner {
     }
 
     private void checkDeprecations(StartParameterInternal startParameter) {
-        UnsupportedJavaRuntimeException.javaDeprecationWarning();
-
-        // This must be done here because DeprecationLogger needs to be initialized properly
         startParameter.checkDeprecation();
     }
 }

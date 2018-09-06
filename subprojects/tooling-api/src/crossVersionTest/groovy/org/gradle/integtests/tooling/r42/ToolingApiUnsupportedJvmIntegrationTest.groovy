@@ -27,7 +27,7 @@ import org.gradle.internal.jvm.UnsupportedJavaRuntimeException
 import org.gradle.util.GradleVersion
 import spock.lang.IgnoreIf
 
-class ToolingApiDeprecatedClientJvmCrossVersionSpec extends ToolingApiSpecification {
+class ToolingApiUnsupportedJvmIntegrationTest extends ToolingApiSpecification {
     def setup() {
         settingsFile << "rootProject.name = 'test'"
 
@@ -73,23 +73,12 @@ public class TestClient {
     @IgnoreIf({ AvailableJavaHomes.jdk7 == null })
     @TargetGradleVersion("current")
     @ToolingApiVersion("current")
-    def "warning when using tooling API from Java 7"() {
+    def "fails when using tooling API from Java 7"() {
         when:
         def out = runScript(AvailableJavaHomes.jdk7.javaHome)
 
         then:
-        out.count(UnsupportedJavaRuntimeException.JAVA7_DEPRECATION_WARNING) == 1
-    }
-
-    @IgnoreIf({ AvailableJavaHomes.jdk8 == null })
-    @TargetGradleVersion("current")
-    @ToolingApiVersion("current")
-    def "no warning when using tooling API from Java 8"() {
-        when:
-        def out = runScript(AvailableJavaHomes.jdk8.javaHome)
-
-        then:
-        out.count(UnsupportedJavaRuntimeException.JAVA7_DEPRECATION_WARNING) == 0
+        out.contains("requires Java 8 or later to run. You are currently using Java 7.")
     }
 
     String runScript(File javaHome) {
@@ -100,7 +89,7 @@ public class TestClient {
         executer.errorOutput = outStr // simple slf4j writes warnings to stderr
         executer.standardOutput = outStr
         executer.commandLine("build/install/test/bin/test")
-        executer.run().assertNormalExitValue()
+        executer.run()
 
         return outStr.toString()
     }

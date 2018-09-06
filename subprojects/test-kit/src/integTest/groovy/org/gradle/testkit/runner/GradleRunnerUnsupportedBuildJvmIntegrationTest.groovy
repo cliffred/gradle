@@ -23,41 +23,18 @@ import spock.lang.IgnoreIf
 import spock.lang.Unroll
 
 @NonCrossVersion
-class GradleRunnerDeprecatedBuildJvmIntegrationTest extends BaseGradleRunnerIntegrationTest {
+class GradleRunnerUnsupportedBuildJvmIntegrationTest extends BaseGradleRunnerIntegrationTest {
 
     @IgnoreIf({ AvailableJavaHomes.jdk7 == null })
     @Unroll
-    def "warns when build is configured to use Java 7"() {
+    def "fails when build is configured to use Java 7"() {
         given:
         testDirectory.file("gradle.properties").writeProperties("org.gradle.java.home": AvailableJavaHomes.jdk7.javaHome.absolutePath)
 
         when:
-        def result = runner().withArguments('--daemon').withDebug(debugFlag).build()
+        def result = runner().buildAndFail()
 
         then:
-        result.output.count(UnsupportedJavaRuntimeException.JAVA7_DEPRECATION_WARNING) == 1
-
-        where:
-        debugFlag | _
-        true      | _
-        false     | _
-    }
-
-    @IgnoreIf({ AvailableJavaHomes.jdk8 == null })
-    @Unroll
-    def "no warns when build is configured to use Java 8"() {
-        given:
-        testDirectory.file("gradle.properties").writeProperties("org.gradle.java.home": AvailableJavaHomes.jdk8.javaHome.absolutePath)
-
-        when:
-        def result = runner().withArguments('--daemon').withDebug(debugFlag).build()
-
-        then:
-        result.output.count(UnsupportedJavaRuntimeException.JAVA7_DEPRECATION_WARNING) == 0
-
-        where:
-        debugFlag | _
-        true      | _
-        false     | _
+        result.output.contains("requires Java 8 or later to run. You are currently using Java 7.")
     }
 }

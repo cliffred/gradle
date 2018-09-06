@@ -22,7 +22,7 @@ import spock.lang.IgnoreIf
 
 class WrapperDeprecatedBuildJvmIntegrationTest extends AbstractWrapperIntegrationSpec {
     @IgnoreIf({ AvailableJavaHomes.jdk7 == null })
-    def "warns of deprecated java version when running under java 7"() {
+    def "fails when running under java 7"() {
         def jdk = AvailableJavaHomes.jdk7
 
         given:
@@ -30,20 +30,7 @@ class WrapperDeprecatedBuildJvmIntegrationTest extends AbstractWrapperIntegratio
         wrapperExecuter.withJavaHome(jdk.javaHome)
 
         expect:
-        def result = wrapperExecuter.withTasks("help").run()
-        result.output.count(UnsupportedJavaRuntimeException.JAVA7_DEPRECATION_WARNING) == 1
-    }
-
-    @IgnoreIf({ AvailableJavaHomes.jdk8 == null })
-    def "no warns of deprecated java version when running under java 8"() {
-        def jdk = AvailableJavaHomes.jdk8
-
-        given:
-        prepareWrapper()
-        wrapperExecuter.withJavaHome(jdk.javaHome)
-
-        expect:
-        def result = wrapperExecuter.withTasks("help").run()
-        result.output.count(UnsupportedJavaRuntimeException.JAVA7_DEPRECATION_WARNING) == 0
+        def result = wrapperExecuter.withTasks("help").runWithFailure()
+        result.assertOutputContains("requires Java 8 or later to run. You are currently using Java 7.")
     }
 }
