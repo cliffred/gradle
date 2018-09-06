@@ -485,7 +485,7 @@ dependencies {
 
     void assertHasExpectedContents(TestFile actualFile, String expectedFileName) {
         actualFile.assertExists()
-        TestFile expectedFile = testDirectory.file("expectedFiles/$expectedFileName").assertIsFile()
+        TestFile expectedFile = testFile("expectedFiles/$expectedFileName").assertIsFile()
         String expectedXml = expectedFile.text
         String actualXml = getActualXml(actualFile)
         Diff diff = new Diff(expectedXml, actualXml)
@@ -503,7 +503,7 @@ dependencies {
 
     void assertHasExpectedProperties(TestFile actualFile, String expectedFileName) {
         actualFile.assertExists()
-        TestFile expectedFile = testDirectory.file("expectedFiles/$expectedFileName").assertIsFile()
+        TestFile expectedFile = testFile("expectedFiles/$expectedFileName").assertIsFile()
         Properties expected = new Properties()
         expected.load(new ByteArrayInputStream(expectedFile.bytes))
         Properties actual = new Properties()

@@ -209,7 +209,7 @@ public class ProjectLoadingIntegrationTest extends AbstractIntegrationTest {
             "project(':child').buildFileName = 'child.gradle'"
         );
 
-        TestFile subDirectory = getTestDirectory().file("child");
+        TestFile subDirectory = testFile("child");
         subDirectory.file("build.gradle").write("throw new RuntimeException()");
         subDirectory.file("child.gradle").write("task('do-stuff')");
 
@@ -233,7 +233,7 @@ public class ProjectLoadingIntegrationTest extends AbstractIntegrationTest {
         testFile("settings.gradle").write("include 'another'");
         testFile("gradle.properties").writelns("prop=value2", "otherProp=value");
 
-        TestFile subDirectory = getTestDirectory().file("subdirectory");
+        TestFile subDirectory = testFile("subdirectory");
         TestFile buildFile = subDirectory.file("build.gradle");
         buildFile.writelns("task('do-stuff') {",
                 "doLast {",
@@ -252,7 +252,7 @@ public class ProjectLoadingIntegrationTest extends AbstractIntegrationTest {
     public void deprecationWarningAppearsWhenNestedBuildHasNoSettingsFile() {
         testFile("settings.gradle").write("include 'another'");
 
-        TestFile subDirectory = getTestDirectory().file("sub");
+        TestFile subDirectory = testFile("sub");
         TestFile subBuildFile = subDirectory.file("sub.gradle").write("");
         subDirectory.file("build.gradle").write("");
 
@@ -273,7 +273,7 @@ public class ProjectLoadingIntegrationTest extends AbstractIntegrationTest {
     public void noDeprecationWarningAppearsWhenUsingRootProject() {
         testFile("settings.gradle").write("include 'another'");
 
-        TestFile subDirectory = getTestDirectory().file("sub");
+        TestFile subDirectory = testFile("sub");
         subDirectory.file("build.gradle").write("");
 
         usingProjectDir(getTestDirectory()).inDirectory(subDirectory).withTasks("help").run();
@@ -283,7 +283,7 @@ public class ProjectLoadingIntegrationTest extends AbstractIntegrationTest {
     public void noDeprecationWarningAppearsWhenSettingsFileIsSpecified() {
         testFile("settings.gradle").write("include 'another'");
 
-        TestFile subDirectory = getTestDirectory().file("sub");
+        TestFile subDirectory = testFile("sub");
         TestFile subSettingsFile = subDirectory.file("renamed_settings.gradle").write("");
         subDirectory.file("build.gradle").write("");
 
@@ -293,7 +293,7 @@ public class ProjectLoadingIntegrationTest extends AbstractIntegrationTest {
     @Test
     public void noDeprecationWarningAppearsWhenEnclosingBuildUsesAnotherBuildFile() {
         testFile("settings.gradle").write("include 'another'");
-        TestFile renamedBuildGradle = getTestDirectory().file("renamed_build.gradle").createFile();
+        TestFile renamedBuildGradle = testFile("renamed_build.gradle").createFile();
 
         usingBuildFile(renamedBuildGradle).inDirectory(getTestDirectory()).withTasks("help").run();
     }
@@ -324,7 +324,7 @@ public class ProjectLoadingIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     public void multiProjectBuildCanHaveSettingsFileAndRootBuildFileInSubDir() {
-        TestFile buildFilesDir = getTestDirectory().file("root");
+        TestFile buildFilesDir = testFile("root");
         TestFile settingsFile = buildFilesDir.file("settings.gradle");
         settingsFile.writelns(
             "includeFlat 'child'",

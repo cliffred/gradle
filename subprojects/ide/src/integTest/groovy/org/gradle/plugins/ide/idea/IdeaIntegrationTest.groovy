@@ -86,7 +86,7 @@ apply plugin: 'idea'
 
     @Test
     void worksWithNonStandardLayout() {
-        executer.inDirectory(testDirectory.file('root')).withTasks('idea').run()
+        executer.inDirectory(testFile('root')).withTasks('idea').run()
 
         assertHasExpectedContents('root/root.ipr')
         assertHasExpectedContents('root/root.iml')
@@ -414,8 +414,8 @@ apply plugin: 'org.gradle.scala-lang'
     }
 
     private void assertHasExpectedContents(String path) {
-        TestFile actualFile = testDirectory.file(path).assertIsFile()
-        TestFile expectedFile = testDirectory.file("expectedFiles/${path}.xml").assertIsFile()
+        TestFile actualFile = testFile(path).assertIsFile()
+        TestFile expectedFile = testFile("expectedFiles/${path}.xml").assertIsFile()
 
         def expectedXml = expectedFile.text
 

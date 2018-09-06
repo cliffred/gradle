@@ -101,7 +101,7 @@ public abstract class AbstractIntegrationTest {
     protected ArtifactBuilder artifactBuilder() {
         GradleExecuter gradleExecuter = getDistribution().executer(testDirectoryProvider, getBuildContext());
         gradleExecuter.withGradleUserHomeDir(getExecuter().getGradleUserHomeDir());
-        return new GradleBackedArtifactBuilder(gradleExecuter, getTestDirectory().file("artifacts"));
+        return new GradleBackedArtifactBuilder(gradleExecuter, testFile("artifacts"));
     }
 
     public MavenFileRepository maven(TestFile repo) {
