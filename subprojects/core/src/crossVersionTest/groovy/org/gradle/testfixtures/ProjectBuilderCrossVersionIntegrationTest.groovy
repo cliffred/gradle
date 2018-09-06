@@ -170,7 +170,7 @@ class ProjectBuilderCrossVersionIntegrationTest extends MultiVersionIntegrationS
     }
 
     private GradleExecuter createGradleExecutor(String gradleVersion, File projectDir = testDirectory, String... tasks) {
-        def executer = buildContext.distribution(gradleVersion).executer(temporaryFolder, getBuildContext())
+        def executer = buildContext.distribution(gradleVersion).executer(temporaryFolder, buildContext)
         executer.inDirectory(projectDir)
         executer.withTasks(tasks)
         executers << executer

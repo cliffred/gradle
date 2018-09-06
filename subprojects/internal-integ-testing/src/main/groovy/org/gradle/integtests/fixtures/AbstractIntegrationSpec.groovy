@@ -61,7 +61,7 @@ class AbstractIntegrationSpec extends Specification {
     @Rule
     final TestNameTestDirectoryProvider temporaryFolder = new TestNameTestDirectoryProvider()
 
-    GradleDistribution distribution = new UnderDevelopmentGradleDistribution(getBuildContext())
+    GradleDistribution distribution = new UnderDevelopmentGradleDistribution(buildContext)
     GradleExecuter executer = createExecuter()
 
     BuildTestFixture buildTestFixture = new BuildTestFixture(temporaryFolder)
@@ -82,7 +82,7 @@ class AbstractIntegrationSpec extends Specification {
     }
 
     GradleContextualExecuter createExecuter() {
-        new GradleContextualExecuter(distribution, temporaryFolder, getBuildContext())
+        new GradleContextualExecuter(distribution, temporaryFolder, buildContext)
     }
 
     protected TestFile getBuildFile() {
