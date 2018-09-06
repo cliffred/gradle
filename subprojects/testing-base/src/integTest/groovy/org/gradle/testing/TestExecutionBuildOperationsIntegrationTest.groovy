@@ -32,11 +32,10 @@ class TestExecutionBuildOperationsIntegrationTest extends AbstractIntegrationSpe
 
     def operations = new BuildOperationsFixture(executer, temporaryFolder)
 
-    def setup() {
-        useRepositoryMirrors()
-    }
-
     def "emitsBuildOperationsForJUnitTests"() {
+        given:
+        useRepositoryMirrors()
+
         when:
         run "test"
 
@@ -50,6 +49,9 @@ class TestExecutionBuildOperationsIntegrationTest extends AbstractIntegrationSpe
     }
 
     def "emitsBuildOperationsForTestNgTests"() {
+        given:
+        useRepositoryMirrors()
+
         when:
         run "test"
 
@@ -64,6 +66,9 @@ class TestExecutionBuildOperationsIntegrationTest extends AbstractIntegrationSpe
 
 
     def "emits test operations as expected for two builds in a row"() {
+        given:
+        useRepositoryMirrors()
+
         given:
         resources.maybeCopy('TestExecutionBuildOperationsIntegrationTest/emitsBuildOperationsForJUnitTests')
 
