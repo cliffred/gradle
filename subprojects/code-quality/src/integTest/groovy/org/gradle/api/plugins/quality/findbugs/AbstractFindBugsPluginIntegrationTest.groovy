@@ -36,6 +36,18 @@ abstract class AbstractFindBugsPluginIntegrationTest extends AbstractIntegration
 
     def setup() {
         writeBuildFile()
+        executer.beforeExecute {
+            expectDeprecationWarning()
+        }
+    }
+
+    def "emits deprecating warning"() {
+        when:
+        succeeds("help")
+
+        then:
+        outputContains("The FindBugs plugin has been deprecated.")
+        outputContains("Consider using the SpotBugs plugin instead.")
     }
 
     def "default findbugs version can be inspected"() {
