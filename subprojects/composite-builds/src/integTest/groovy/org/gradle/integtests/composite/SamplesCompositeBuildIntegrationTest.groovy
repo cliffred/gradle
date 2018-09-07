@@ -20,6 +20,8 @@ package org.gradle.integtests.composite
 import org.gradle.integtests.fixtures.AbstractIntegrationSpec
 import org.gradle.integtests.fixtures.Sample
 import org.gradle.integtests.fixtures.UsesSample
+import org.gradle.integtests.fixtures.executer.IntegrationTestBuildContext
+import org.gradle.test.fixtures.file.TestFile
 import org.junit.Rule
 
 class SamplesCompositeBuildIntegrationTest extends AbstractIntegrationSpec {
@@ -98,8 +100,20 @@ class SamplesCompositeBuildIntegrationTest extends AbstractIntegrationSpec {
         outputContains("The answer is 42")
     }
 
+    String agentString(String fileName) {
+        TestFile gradleProjectRoot = IntegrationTestBuildContext.INSTANCE.getGradleUserHomeDir().parentFile.parentFile
+        String agent = gradleProjectRoot.file('file-leak-detector-1.11-jar-with-dependencies.jar').absolutePath.replace("\\", "/")
+        String outputFile = gradleProjectRoot.file("subprojects/composite-builds/build/reports/tests/integTest/${fileName}").absolutePath.replace("\\", "/")
+        return "-javaagent:${agent}=trace=${outputFile}"
+    }
+
     @UsesSample('compositeBuilds/plugin-dev')
     def "can develop plugin with composite"() {
+        given:
+        file('user-home/gradle.properties').text="org.gradle.jvmargs=xxx"
+        executer.withBuildJvmOpts(agentString("output1.txt"))
+        executer.withCommandLineGradleOpts(agentString("output2.txt"))
+
         when:
         executer.inDirectory(sample.dir.file("consumer")).withArguments("--include-build", "../greeting-plugin")
         succeeds(':greetBob')
@@ -111,6 +125,10 @@ class SamplesCompositeBuildIntegrationTest extends AbstractIntegrationSpec {
         when:
         def greetingTaskSource = sample.dir.file("greeting-plugin/src/main/java/org/sample/GreetingTask.java")
         greetingTaskSource.text = greetingTaskSource.text.replace("Hi", "G'day")
+
+        file('user-home/gradle.properties').text="org.gradle.jvmargs=xxx"
+        executer.withBuildJvmOpts(agentString("output3.txt"))
+        executer.withCommandLineGradleOpts(agentString("output4.txt"))
 
         and:
         executer.inDirectory(sample.dir.file("consumer")).withArguments("--include-build", "../greeting-plugin")

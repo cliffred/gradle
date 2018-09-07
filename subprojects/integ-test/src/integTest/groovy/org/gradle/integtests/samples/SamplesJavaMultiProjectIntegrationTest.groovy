@@ -23,7 +23,6 @@ import org.gradle.integtests.fixtures.DefaultTestExecutionResult
 import org.gradle.integtests.fixtures.Sample
 import org.gradle.test.fixtures.file.TestFile
 import org.gradle.util.Requires
-import org.junit.Before
 import org.junit.Rule
 import spock.lang.Unroll
 
@@ -40,8 +39,7 @@ class SamplesJavaMultiProjectIntegrationTest extends AbstractIntegrationSpec {
 
     @Rule public final Sample sample = new Sample(testDirectoryProvider, 'java/multiproject')
 
-    @Before
-    def setUp() {
+    def setup() {
         useRepositoryMirrors(true)
     }
 

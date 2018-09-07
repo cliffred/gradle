@@ -180,6 +180,14 @@ public class InProcessGradleExecuter extends DaemonGradleExecuter {
                 return true;
             }
         }
+
+        gradleProperties = new File(getGradleUserHomeDir(), "gradle.properties");
+        if (gradleProperties.isFile()) {
+            Properties properties = GUtil.loadProperties(gradleProperties);
+            if (properties.getProperty("org.gradle.java.home") != null || properties.getProperty("org.gradle.jvmargs") != null) {
+                return true;
+            }
+        }
         return false;
     }
 

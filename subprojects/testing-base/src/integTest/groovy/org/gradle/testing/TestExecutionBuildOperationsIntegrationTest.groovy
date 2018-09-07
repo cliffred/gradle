@@ -68,8 +68,6 @@ class TestExecutionBuildOperationsIntegrationTest extends AbstractIntegrationSpe
     def "emits test operations as expected for two builds in a row"() {
         given:
         useRepositoryMirrors()
-
-        given:
         resources.maybeCopy('TestExecutionBuildOperationsIntegrationTest/emitsBuildOperationsForJUnitTests')
 
         when:

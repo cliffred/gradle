@@ -41,8 +41,3 @@ testFilesCleanup {
     policy.set(WhenNotEmpty.REPORT)
 }
 
-tasks.withType<Test> {
-    jvmArgs("-javaagent:${rootProject.file("file-leak-detector-1.11-jar-with-dependencies.jar=trace").getAbsolutePath().replace("\\", "/")}")
-}
-
-
